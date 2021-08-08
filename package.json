@@ -1,0 +1,32 @@
+{
+  "name": "ses2a-group4-backend",
+  "version": "1.0.0",
+  "description": "## Quick Start ```bash # Install dependencies for server npm install # Run the server # Using node:  node index # Alternative way to run server using nodemon: nodemon index ```",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon index.ts"
+    
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aryangupta1/SES2A-Group4-Backend.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/aryangupta1/SES2A-Group4-Backend/issues"
+  },
+  "homepage": "https://github.com/aryangupta1/SES2A-Group4-Backend#readme",
+  "dependencies": {
+    "express": "4.17.1"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.13",
+    "@types/node": "^16.4.13",
+    "nodemon": "^2.0.12",
+    "ts-node": "^10.1.0",
+    "typescript": "^4.3.5"
+  }
+}
