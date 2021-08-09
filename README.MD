@@ -3,14 +3,11 @@
 
 ## Quick Start
 ```bash
-# Install dependencies for server
-npm install
-# Run the server
-# Using node: 
-node index
-# Alternative way to run server using nodemon:
-nodemon index
-```
+# Install dependencies any dependencies
+yarn
+# Run server 
+yarn start
+
 
 
 
