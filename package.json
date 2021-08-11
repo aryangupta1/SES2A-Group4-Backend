@@ -19,7 +19,9 @@
   },
   "homepage": "https://github.com/aryangupta1/SES2A-Group4-Backend#readme",
   "dependencies": {
+    "@types/cors": "^2.8.12",
     "@types/pg": "^8.6.1",
+    "cors": "^2.8.5",
     "express": "4.17.1",
     "pg": "^8.7.1"
   },
