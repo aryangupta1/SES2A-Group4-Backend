@@ -43,3 +43,11 @@ app.post("/students", async(req, res) => {
   }
 })
 //Students will add their preferences and skills etc in other routes below (TBD)
+
+//Rough list of student routes to be made
+
+//Get a specific student by id
+
+//Update a student
+
+//Delete a student
