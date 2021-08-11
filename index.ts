@@ -17,6 +17,16 @@ app.listen(PORT, () => {
 
 //Routes
 
+//Get all students
+app.get("/students", async(req, res) => {
+  try {
+    const allStudents = await pool.query("SELECT * FROM students");
+    res.json(allStudents.rows);
+  } catch (error) {
+    console.error('An error occurred: ', error.message);
+  }
+})
+
 /* Create new student - Very basic only using currentGroupStatus - which will be set to false by default. 
 This route is ideal for when a student signs up */
 app.post("/students", async(req, res) => {
