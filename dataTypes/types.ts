@@ -5,7 +5,8 @@ export enum EPreferredRole {
   BACKEND = "Backend",
   BUSINESS_ANALYST = "Business Analyst",
   TESTER = "Tester",
-  ARCHITECT = "ARCHITECT",
+  ARCHITECT = "Architect",
+  DEVOPS = "Dev-Ops",
 }
 
 export enum ESkills {
