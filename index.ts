@@ -11,14 +11,21 @@ createConnection().then((connection) => {
   const app = express();
   const PORT = 8000;
 
+  app.get("/", (req, res) => res.send("HELLO THERE"));
+  app.listen(PORT, () => {
+    console.log(`Server is running at http://localhost:${PORT}`);
+  });
+
   //Middleware
   app.use(cors());
   //Allows us to access request.body to access JSON data
   app.use(express.json());
 
   app.post("/students", async function (req, res) {
-    const user = await studentRepository.create(req.body);
-    const results = await studentRepository.save(user);
+    const student = await studentRepository.create(req.body);
+    const results = await studentRepository.save(student);
+    console.log(req);
+    console.log(student);
     return res.send(results);
   });
 
