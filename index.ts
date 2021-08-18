@@ -25,51 +25,7 @@ createConnection().then((connection) => {
     //const { firstName, lastName, preferredRole, skills } = req.body;
     const student = await studentRepository.create(req.body);
     const results = await studentRepository.save(student);
-    console.log(req);
-    console.log(student);
+    console.log(req.body);
     return res.json(results);
   });
-
-  // app.get("/", (req, res) => res.send("HELLO THERE"));
-  // app.listen(PORT, () => {
-  //   console.log(`Server is running at http://localhost:${PORT}`);
-  // });
-
-  //Routes
-
-  //Get all students
-  // app.get("/students", async (req, res) => {
-  //   try {
-  //     const allStudents = await pool.query("SELECT * FROM students");
-  //     res.json(allStudents.rows);
-  //   } catch (error) {
-  //     console.error("An error occurred: ", error.message);
-  //   }
-  // });
-
-  /* Create new student - Very basic only using currentGroupStatus - which will be set to false by default. 
-This route is ideal for when a student signs up */
-  //   app.post("/students", async (req, res) => {
-  //     try {
-  //       //Set to false by default
-  //       const currentGroupStatus = false;
-  //       const newStudent = await pool.query(
-  //         "INSERT INTO students (currentGroupStatus) VALUES($1) RETURNING *",
-  //         [currentGroupStatus]
-  //       );
-  //       res.json(newStudent.rows[0]);
-  //     } catch (error) {
-  //       console.error("An error occured: ", error.message);
-  //     }
-  //   });
-  // });
-  //Students will add their preferences and skills etc in other routes below (TBD)
-
-  //Rough list of student routes to be made
-
-  //Get a specific student by id
-
-  //Update a student
-
-  //Delete a student
 });
