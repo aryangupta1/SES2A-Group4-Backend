@@ -10,10 +10,10 @@ export class Student {
   @PrimaryGeneratedColumn("uuid")
   id?: string;
 
-  @Column({ nullable: true })
+  @Column("text", { nullable: true })
   firstName?: string;
 
-  @Column({ nullable: true })
+  @Column("text", { nullable: true })
   lastName?: string;
 
   @Column("text", { array: true, nullable: true })
