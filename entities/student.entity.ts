@@ -22,7 +22,7 @@ export class Student {
   @Column("text", { array: true, nullable: true })
   skills?: ESkills[];
 
-  @Column("string", { default: 0 })
+  @Column("text", { default: 0 })
   groupId: string;
 
   // @Column({ name: "created_at" })
