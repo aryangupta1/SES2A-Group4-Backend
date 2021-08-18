@@ -22,11 +22,12 @@ createConnection().then((connection) => {
   app.use(express.json());
 
   app.post("/students", async function (req, res) {
+    //const { firstName, lastName, preferredRole, skills } = req.body;
     const student = await studentRepository.create(req.body);
     const results = await studentRepository.save(student);
     console.log(req);
     console.log(student);
-    return res.send(results);
+    return res.json(results);
   });
 
   // app.get("/", (req, res) => res.send("HELLO THERE"));
