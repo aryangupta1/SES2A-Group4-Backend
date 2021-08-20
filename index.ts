@@ -25,6 +25,7 @@ createConnection().then((connection) => {
     //const { firstName, lastName, preferredRole, skills } = req.body;
     const student = await studentRepository.create(req.body);
     const results = await studentRepository.save(student);
+    
     console.log(req.body);
     return res.json(results);
   });
