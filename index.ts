@@ -4,9 +4,11 @@ import cors from "cors";
 import { createConnection } from "typeorm";
 import { Student } from "./entities/student.entity";
 import { studentDto } from "./dtos/studentDto";
+import { Group } from "./entities/group.entity";
 
 createConnection().then((connection) => {
   const studentRepository = connection.getRepository(Student);
+  const groupRepository = connection.getRepository(Group);
 
   const app = express();
   const PORT = 8000;
@@ -22,9 +24,15 @@ createConnection().then((connection) => {
   app.use(express.json());
 
   app.post("/students", async function (req, res) {
-    //const { firstName, lastName, preferredRole, skills } = req.body;
     const student = await studentRepository.create(req.body);
     const results = await studentRepository.save(student);
+    console.log(req.body);
+    return res.json(results);
+  });
+
+  app.post("/groups", async function (req, res) {
+    const group = await groupRepository.create(req.body);
+    const results = await groupRepository.save(group);
     console.log(req.body);
     return res.json(results);
   });
