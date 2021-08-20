@@ -6,6 +6,12 @@ export class Student {
   @PrimaryGeneratedColumn("uuid")
   studentid: string;
 
+  @Column("text", {nullable: true})
+  email?: string;
+
+  @Column("text", {nullable: true})
+  password?: string;
+
   @Column("text", { nullable: true })
   firstName: string;
 
