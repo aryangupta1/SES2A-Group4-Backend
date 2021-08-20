@@ -47,4 +47,7 @@ createConnection().then((connection) => {
     // console.log(req.body);
     // return res.json(results);
   });
+
+  //Register Route
+  app.use("/auth", require("./routes/jwtAuth"));
 });
