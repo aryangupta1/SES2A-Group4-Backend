@@ -1,7 +1,7 @@
 import express from "express";
 import { getRepository } from "typeorm";
 import { Student } from "../entities/student.entity";
-import bcrypt from "bcrypt";
+import bcrypt, { compare } from "bcrypt";
 const router = express.Router();
 import jwtGenerator from "../utils/jwtGenerator";
 
@@ -33,6 +33,31 @@ router.post("/register", async (req, res) => {
         res.status(500).send("Server Error");
     }
 });
+
+//Login Route
+
+router.post("/login", async (req, res) => {
+    try {
+        //Destructure req.body
+        const {email, password} = req.body;
+        //Check if user doesn't exist, if not throw error
+        const studentRepository = await getRepository(Student);
+        const user = await studentRepository.find({where : {email: email}});
+        if(user.length === 0){
+            res.status(401).json("Email is incorrect");
+        }
+        //Check if incoming password is the same as the db password
+        const isValid = await compare(password, user.map(data=>data.password).toString());
+        if(!isValid){
+            res.status(401).json("Password is incorrect");
+        }
+        //Give user jwt token
+        const token = jwtGenerator(JSON.stringify(user.map((data) => data.id)));
+        res.json({token});
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send("Server Error");    }
+})
 
 
 module.exports = router;
