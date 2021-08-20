@@ -11,7 +11,7 @@ yarn start
 
 ## Database setup 
 #### Make sure you have Postgres installed
-[Installation video](https://www.youtube.com/watch?v=fZQI7nBu32M&ab_channel=Socratica). 
+[Installation video](https://*www.youtube.com/watch?v=fZQI7nBu32M&ab_channel=Socratica). 
 If you have already installed it ignore this step
 #### Create the students database
 Open up a terminal/command prompt

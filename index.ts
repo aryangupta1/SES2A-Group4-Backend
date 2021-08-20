@@ -43,5 +43,8 @@ createConnection().then((connection) => {
     student.group = group?.groupId!;
     const studentUpdate = await studentRepository.save(student);
     return response.send(studentUpdate);
+    
+    // console.log(req.body);
+    // return res.json(results);
   });
 });
