@@ -36,6 +36,7 @@ createConnection().then((connection) => {
     console.log(req.body);
     return res.json(results);
   });
+
   app.put("/groups:studentId/:groupName", async function (req, res) {
     const student = studentRepository
       .createQueryBuilder(req.params.studentId)
