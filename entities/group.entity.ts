@@ -8,6 +8,9 @@ export class Group {
   @PrimaryGeneratedColumn("uuid")
   groupId: string;
 
+  @Column("text", { unique: true })
+  groupName: string;
+
   @Column("enum", { array: true, nullable: true, enum: EPreferredRole, default: [] })
   rolesRequired: EPreferredRole[];
 

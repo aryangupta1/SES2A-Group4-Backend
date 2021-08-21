@@ -36,4 +36,11 @@ createConnection().then((connection) => {
     console.log(req.body);
     return res.json(results);
   });
+  app.put("/groups:studentId/:groupName", async function (req, res) {
+    const student = studentRepository
+      .createQueryBuilder(req.params.studentId)
+      .where("student.studentId like :studentId");
+    const group = groupRepository.createQueryBuilder(req.params.groupName).where("group.groupName like :groupName");
+    const studentUpdate = await studentRepository.save({ group: group.groupName });
+  });
 });

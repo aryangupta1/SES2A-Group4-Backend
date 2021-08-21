@@ -18,8 +18,8 @@ export class Student {
   @Column("enum", { array: true, nullable: true, enum: ESkills, default: [] })
   skills: ESkills;
 
-  @Column("text", { default: 0 })
-  groupId: string;
+  @Column("text", { nullable: true })
+  group: string;
 
   @CreateDateColumn({ name: "created_at" })
   createdAt: Date;
