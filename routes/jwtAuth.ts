@@ -4,10 +4,11 @@ import { Student } from "../entities/student.entity";
 import bcrypt, { compare } from "bcrypt";
 const router = express.Router();
 import jwtGenerator from "../utils/jwtGenerator";
-
+import {checkJwt} from '../middleware/authorisation';
+import {validateForm} from '../middleware/formValidation';
 
 //Register Route
-router.post("/register", async (req, res) => {
+router.post("/register", validateForm, async (req, res) => {
     try {
         //Destructure req.body
         const {firstName, lastName, email, password} = req.body;
@@ -36,7 +37,7 @@ router.post("/register", async (req, res) => {
 
 //Login Route
 
-router.post("/login", async (req, res) => {
+router.post("/login", validateForm, async (req, res) => {
     try {
         //Destructure req.body
         const {email, password} = req.body;
