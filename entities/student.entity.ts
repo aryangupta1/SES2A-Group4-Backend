@@ -13,10 +13,10 @@ export class Student {
   lastName: string;
 
   @Column("enum", { array: true, nullable: true, enum: EPreferredRole, default: [] })
-  preferredRole: EPreferredRole;
+  preferredRole: EPreferredRole[];
 
   @Column("enum", { array: true, nullable: true, enum: ESkills, default: [] })
-  skills: ESkills;
+  skills: ESkills[];
 
   @Column("text", { nullable: true })
   group: string;

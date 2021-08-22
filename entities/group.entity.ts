@@ -8,7 +8,7 @@ export class Group {
   @PrimaryGeneratedColumn("uuid")
   groupId: string;
 
-  @Column("text", { unique: true })
+  @Column("text", { default: "Not named yet" })
   groupName: string;
 
   @Column("enum", { array: true, nullable: true, enum: EPreferredRole, default: [] })
