@@ -27,7 +27,7 @@ router.post("/register", validateForm, async (req, res) => {
         const student = await studentRepository.create(newStudent);
         const results = await studentRepository.save(student);
         //Generate jwt token
-        const token = jwtGenerator(JSON.stringify(results.id));
+        const token = jwtGenerator(JSON.stringify(results.studentid));
         res.json({token});
     } catch (error) {
         console.error(error.message);
@@ -53,7 +53,7 @@ router.post("/login", validateForm, async (req, res) => {
             res.status(401).json("Password is incorrect");
         }
         //Give user jwt token
-        const token = jwtGenerator(JSON.stringify(user.map((data) => data.id)));
+        const token = jwtGenerator(JSON.stringify(user.map((data) => data.studentid)));
         res.json({token});
     } catch (error) {
         console.error(error.message);
