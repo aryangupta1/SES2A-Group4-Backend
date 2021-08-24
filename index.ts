@@ -23,17 +23,25 @@ createConnection().then((connection) => {
   //Allows us to access request.body to access JSON data
   app.use(express.json());
 
-  app.post("/students", async function (req, res) {
-    const student = await studentRepository.create(req.body);
+  app.post("/students", async function (request, response) {
+    const student = await studentRepository.create(request.body);
     const results = await studentRepository.save(student);
-    console.log(req.body);
-    return res.json(results);
+    console.log(request.body);
+    return response.json(results);
   });
 
-  app.post("/groups", async function (req, res) {
-    const group = await groupRepository.create(req.body);
+  app.post("/groups", async function (request, response) {
+    const group = await groupRepository.create(request.body);
     const results = await groupRepository.save(group);
-    console.log(req.body);
-    return res.json(results);
+    console.log(request.body);
+    return response.json(results);
+  });
+
+  app.put("/groups/:studentId/:groupId", async function (request, response) {
+    const student: Student = (await studentRepository.findOne(request.params.studentId))!; // The '!' is a non-null assertion operator
+    const group = await groupRepository.findOne(request.params.groupId);
+    student.group = group?.groupId!;
+    const studentUpdate = await studentRepository.save(student);
+    return response.send(studentUpdate);
   });
 });
