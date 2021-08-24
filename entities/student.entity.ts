@@ -12,6 +12,12 @@ export class Student {
   @Column("text", {nullable: true})
   password?: string;
 
+  @Column("text", {nullable: true})
+  email?: string;
+
+  @Column("text", {nullable: true})
+  password?: string;
+
   @Column("text", { nullable: true })
   firstName: string;
 
