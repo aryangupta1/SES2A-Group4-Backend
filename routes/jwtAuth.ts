@@ -1,13 +1,14 @@
 import express from "express";
 import { getRepository } from "typeorm";
 import { Student } from "../entities/student.entity";
-const bcrypt = require("bcrypt");
+import bcrypt, { compare } from "bcrypt";
 const router = express.Router();
 import jwtGenerator from "../utils/jwtGenerator";
-
+import {checkJwt} from '../middleware/authorisation';
+import {validateForm} from '../middleware/formValidation';
 
 //Register Route
-router.post("/register", async (req, res) => {
+router.post("/register", validateForm, async (req, res) => {
     try {
         //Destructure req.body
         const {firstName, lastName, email, password} = req.body;
@@ -26,7 +27,7 @@ router.post("/register", async (req, res) => {
         const student = await studentRepository.create(newStudent);
         const results = await studentRepository.save(student);
         //Generate jwt token
-        const token = jwtGenerator(JSON.stringify(results.id));
+        const token = jwtGenerator(JSON.stringify(results.studentid));
         res.json({token});
     } catch (error) {
         console.error(error.message);
@@ -36,7 +37,7 @@ router.post("/register", async (req, res) => {
 
 //Login Route
 
-router.post("/login", async (req, res) => {
+router.post("/login", validateForm, async (req, res) => {
     try {
         //Destructure req.body
         const {email, password} = req.body;
@@ -47,11 +48,12 @@ router.post("/login", async (req, res) => {
             res.status(401).json("Email is incorrect");
         }
         //Check if incoming password is the same as the db password
-        if(password !== user.map(data=>data.password).toString()){
+        const isValid = await compare(password, user.map(data=>data.password).toString());
+        if(!isValid){
             res.status(401).json("Password is incorrect");
         }
         //Give user jwt token
-        const token = jwtGenerator(JSON.stringify(user.map((data) => data.id)));
+        const token = jwtGenerator(JSON.stringify(user.map((data) => data.studentid)));
         res.json({token});
     } catch (error) {
         console.error(error.message);
