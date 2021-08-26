@@ -11,7 +11,6 @@ export enum EPreferredRole {
 
 export enum ESkills {
   JAVASCRIPT = "Javascript",
-  TYPESCRIPT = "Typescript",
   JAVA = "Java",
   CPP = "C++",
   UI_UX = "UI/UX",
