@@ -10,6 +10,8 @@ import {validateForm} from '../middleware/formValidation';
 //Register Route
 router.post("/register", validateForm, async (req, res) => {
     try {
+        res.header("Access-Control-Allow-Origin", "*");
+        res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
         //Destructure req.body
         const {firstName, lastName, email, password} = req.body;
         //Check if user exists
@@ -39,6 +41,8 @@ router.post("/register", validateForm, async (req, res) => {
 
 router.post("/login", validateForm, async (req, res) => {
     try {
+        res.header("Access-Control-Allow-Origin", "*");
+        res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
         //Destructure req.body
         const {email, password} = req.body;
         //Check if user doesn't exist, if not throw error
