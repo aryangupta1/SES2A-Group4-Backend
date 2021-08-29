@@ -8,7 +8,7 @@ export const validateForm = async(req: Request, res: Response, next: NextFunctio
     }
     if (req.path === "/register") {
       console.log(!email.length);
-      if (![email, firstName, lastName, password].every(Boolean)) {
+      if (![email, password].every(Boolean)) {
         return res.json("Missing Credentials");
       } else if (!validForm(email)) {
         return res.json("Invalid Email");
