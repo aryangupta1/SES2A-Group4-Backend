@@ -7,13 +7,10 @@ import { Group } from "./group.entity";
 @Entity({ name: "SharedCollection" })
 export abstract class SharedCollection {
   @PrimaryGeneratedColumn("uuid")
-  collectionId: string;
+  id: string;
 
   @Column("text", { nullable: true })
   assignmentName: string;
-
-  @Column({ nullable: true })
-  maxSizeOfGroup: Number;
 
   @Column("enum", { array: true, nullable: true, enum: EPreferredRole, default: [] })
   rolesRequired: EPreferredRole[];
