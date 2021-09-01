@@ -1,28 +1,20 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, Generated } from "typeorm";
 import { EPreferredRole, ESkills } from "../dataTypes/types";
 import { Student } from "./student.entity";
 import uuid from "uuid";
+import { SharedCollection } from "./sharedCollection.entity";
 
 @Entity({ name: "group" })
-export class Group {
+export class Group extends SharedCollection {
   @PrimaryGeneratedColumn("uuid")
   groupId: string;
 
-  @Column("text", { default: "Not named yet" })
-  groupName: string;
-
-  @Column("enum", { array: true, nullable: true, enum: EPreferredRole, default: [] })
-  rolesRequired: EPreferredRole[];
+  @Column({ nullable: true })
+  groupNumber: Number;
 
   @Column("text", { array: true, nullable: true, default: [] })
-  studentsInGroup: string[]; // This will store the uuid of students in the group
-
-  @Column("enum", { array: true, nullable: true, enum: ESkills, default: [] })
-  skillsRequired: ESkills[];
-
-  @Column({ nullable: true })
-  maxSizeOfGroup: Number;
+  studentIdsInGroup: string[]; // This will store the uuid of students in the group
 
   @CreateDateColumn({ name: "created_at" })
-  createdAt: Date;
+  createdAt?: Date;
 }

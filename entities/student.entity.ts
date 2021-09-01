@@ -1,15 +1,16 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, Generated } from "typeorm";
 import { EPreferredRole, ESkills } from "../dataTypes/types";
+import { SharedCollection } from "./sharedCollection.entity";
 
 @Entity({ name: "student" })
-export class Student {
+export class Student extends SharedCollection {
   @PrimaryGeneratedColumn("uuid")
   studentid: string;
 
-  @Column("text", {nullable: true})
+  @Column("text", { nullable: true })
   email?: string;
 
-  @Column("text", {nullable: true})
+  @Column("text", { nullable: true })
   password?: string;
 
   @Column("text", { nullable: true })
@@ -18,15 +19,9 @@ export class Student {
   @Column("text", { nullable: true })
   lastName: string;
 
-  @Column("enum", { array: true, nullable: true, enum: EPreferredRole, default: [] })
-  preferredRole: EPreferredRole[];
-
-  @Column("enum", { array: true, nullable: true, enum: ESkills, default: [] })
-  skills: ESkills[];
-
   @Column("text", { nullable: true })
-  group: string;
+  groupId: string;
 
   @CreateDateColumn({ name: "created_at" })
-  createdAt: Date;
+  createdAt?: Date;
 }
