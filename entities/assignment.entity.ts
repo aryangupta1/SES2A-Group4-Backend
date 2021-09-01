@@ -7,14 +7,11 @@ import { SharedCollection } from "./sharedCollection.entity";
 
 @Entity({ name: "assignment" })
 export class Assignment extends SharedCollection {
-  @Column("text", { nullable: true })
-  owner: string; // Must be a admin username
+  @PrimaryGeneratedColumn("uuid")
+  assignmentId: string;
 
   @Column({ nullable: true })
   numberOfGroups: Number;
-
-  @Column({ nullable: true })
-  maxSizeOfGroup: Number;
 
   @Column("text", { array: true, nullable: true })
   groupsInThisAssignment: string[];
