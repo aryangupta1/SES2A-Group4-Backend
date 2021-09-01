@@ -60,7 +60,7 @@ createConnection().then((connection) => {
         console.log(request.body, results2);
       });
     }
-    return response.json(results);
+    return response.json({ assignment, results });
   });
 
   app.put("/groups/:studentId/:groupId", async function (request, response) {

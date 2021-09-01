@@ -6,11 +6,11 @@ import { SharedCollection } from "./sharedCollection.entity";
 
 @Entity({ name: "group" })
 export class Group extends SharedCollection {
-  @PrimaryGeneratedColumn("uuid")
-  groupId: string;
-
   @Column({ nullable: true })
   groupNumber: Number;
+
+  @Column({ nullable: true })
+  maxSizeOfGroup: Number;
 
   @Column("text", { array: true, nullable: true, default: [] })
   studentIdsInGroup: string[]; // This will store the uuid of students in the group
