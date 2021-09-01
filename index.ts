@@ -5,6 +5,8 @@ import { createConnection } from "typeorm";
 import { Student } from "./entities/student.entity";
 import { Group } from "./entities/group.entity";
 import { Assignment } from "./entities/assignment.entity";
+import { EPreferredRole, ESkills } from "./dataTypes/types";
+
 
 createConnection().then((connection) => {
   const studentRepository = connection.getRepository(Student);
@@ -73,7 +75,18 @@ createConnection().then((connection) => {
     // console.log(req.body);
     // return res.json(results);
   });
-
+  //Sends preferences to frontend to render on UI
+  app.get("/preferences", async function (request, response) {
+    response.header("Access-Control-Allow-Origin", "*");
+    response.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    return response.send(EPreferredRole); 
+  });
+  //Sends skills to frontend to render on UI
+  app.get("/skills", async function(request, response){
+    response.header("Access-Control-Allow-Origin", "*");
+    response.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    return response.send(ESkills);
+  });
   //Register Route
   app.use("/auth", require("./routes/jwtAuth"));
 });
