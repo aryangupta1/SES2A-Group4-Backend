@@ -7,7 +7,6 @@ import { Group } from "./entities/group.entity";
 import { Assignment } from "./entities/assignment.entity";
 import { EPreferredRole, ESkills } from "./dataTypes/types";
 
-
 createConnection().then((connection) => {
   const studentRepository = connection.getRepository(Student);
   const groupRepository = connection.getRepository(Group);
@@ -41,28 +40,28 @@ createConnection().then((connection) => {
   });
 
   app.post("/assignments", async function (request, response) {
-    const assignment = await assignmentRepository.create(request.body);
-    const results = await assignmentRepository.save(assignment);
-    console.log(request.body);
+    // Creates an assignment and any groups that must be created within it
+    let groupsInAssignmentInstance: string[] = [];
 
     for (let index = 0; index < request.body.numberOfGroups; index++) {
       const newGroup: Group = {
-        groupId: "",
-        groupNumber: index + 1,
+        groupName: request.body.assignmentName + "-Group-" + (index + 1),
         studentIdsInGroup: [],
         assignmentName: request.body.assignmentName,
-        collectionId: "",
         maxSizeOfGroup: request.body.maxSizeOfGroup,
         rolesRequired: request.body.rolesRequired,
         skillsRequired: request.body.skillsRequired,
       };
-      app.post("/groups", async function (newGroup, response) {
-        const group = await groupRepository.create(newGroup.body);
-        const results2 = await groupRepository.save(group);
-        console.log(request.body, results2);
-      });
+
+      const group = await groupRepository.create(newGroup);
+      const groupResult = await groupRepository.save(group);
+      // response.write(groupResult);
+      groupsInAssignmentInstance.push(newGroup.groupName);
     }
-    return response.json({ assignment, results });
+    request.body.groupsInThisAssignment = groupsInAssignmentInstance;
+    const assignment = await assignmentRepository.create(request.body);
+    const assignmentResult = await assignmentRepository.save(assignment);
+    return response.send(assignmentResult);
   });
 
   app.put("/groups/:studentId/:groupId", async function (request, response) {
@@ -79,10 +78,10 @@ createConnection().then((connection) => {
   app.get("/preferences", async function (request, response) {
     response.header("Access-Control-Allow-Origin", "*");
     response.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    return response.send(EPreferredRole); 
+    return response.send(EPreferredRole);
   });
   //Sends skills to frontend to render on UI
-  app.get("/skills", async function(request, response){
+  app.get("/skills", async function (request, response) {
     response.header("Access-Control-Allow-Origin", "*");
     response.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     return response.send(ESkills);

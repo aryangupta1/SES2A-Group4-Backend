@@ -7,7 +7,7 @@ import { Group } from "./group.entity";
 @Entity({ name: "SharedCollection" })
 export abstract class SharedCollection {
   @PrimaryGeneratedColumn("uuid")
-  id: string;
+  id?: string;
 
   @Column("text", { nullable: true })
   assignmentName: string;
