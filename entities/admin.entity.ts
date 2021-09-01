@@ -1,17 +1,15 @@
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, Generated } from "typeorm";
-import { EPreferredRole, ESkills } from "../dataTypes/types";
-import { SharedCollection } from "./sharedCollection.entity";
 
-@Entity({ name: "student" })
-export class Student extends SharedCollection {
+@Entity({ name: "admin" })
+export class admin {
   @PrimaryGeneratedColumn("uuid")
-  studentid: string;
+  adminId: string;
 
   @Column("text", { nullable: true })
-  email?: string;
+  email: string;
 
   @Column("text", { nullable: true })
-  password?: string;
+  password: string;
 
   @Column("text", { nullable: true })
   firstName: string;
@@ -19,8 +17,8 @@ export class Student extends SharedCollection {
   @Column("text", { nullable: true })
   lastName: string;
 
-  @Column("text", { nullable: true })
-  groupId: string;
+  @Column("text", { array: true, nullable: true })
+  assignmentNames: string[]; // Can create multiple assignments
 
   @CreateDateColumn({ name: "created_at" })
   createdAt?: Date;
