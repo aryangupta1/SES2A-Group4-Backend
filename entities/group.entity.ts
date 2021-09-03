@@ -7,7 +7,7 @@ import { SharedCollection } from "./sharedCollection.entity";
 @Entity({ name: "group" })
 export class Group extends SharedCollection {
   @Column({ nullable: true })
-  groupNumber: Number;
+  groupName: string;
 
   @Column({ nullable: true })
   maxSizeOfGroup: Number;
