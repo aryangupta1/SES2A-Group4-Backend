@@ -7,12 +7,13 @@ import { Group } from "./entities/group.entity";
 import { Assignment } from "./entities/assignment.entity";
 import { EPreferredRole, ESkills } from "./dataTypes/types";
 import { group } from "console";
+import { admin } from "./entities/admin.entity";
 
 createConnection().then((connection) => {
   const studentRepository = connection.getRepository(Student);
   const groupRepository = connection.getRepository(Group);
   const assignmentRepository = connection.getRepository(Assignment);
-
+  const adminRepository = connection.getRepository(admin);
   const app = express();
   const PORT = 8000;
 
