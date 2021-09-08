@@ -27,6 +27,16 @@ createConnection().then((connection) => {
   //Allows us to access request.body to access JSON data
   app.use(express.json());
 
+  app.put("/students/:email/roles", async function(request, response){
+    response.header("Access-Control-Allow-Origin", "*");
+    response.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    const email = request.params.email;
+    const roles = request.body;    
+    const updateStudent = await studentRepository.createQueryBuilder("student").update<Student>(Student, {rolesRequired: roles})
+    .where("email = :email", {email:email}).execute();
+    return response.json(updateStudent);
+  });
+
   app.post("/students", async function (request, response) {
     const student = await studentRepository.create(request.body);
     const results = await studentRepository.save(student);
