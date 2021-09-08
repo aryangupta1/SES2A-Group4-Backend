@@ -100,11 +100,29 @@ createConnection().then((connection) => {
       groups.push(individualGroup);
     } // Gives us our list of groups for an assignment
 
+    const studentsInAssignment: Student[] = [];
+    const student = await studentRepository.find({ where: { assignment: assignment, groupId: null } });
     // Roles first - Loop through each group, and if they dont have their roles met, add a student who meets the criteria
-    // groups.forEach(element => {
-    //   if(element.rolesRequired.length===0){
-    //     const eligibleStudent = (await studentRepository.findOne(element.rolesRequired))
-    //   }
-    // });
+    let hasStudentForRole: boolean = false;
+    let hasStudentForPreference: boolean = false;
+  });
+// group by group
+// if that group has a role that isnt fulfilled, add a student who has that role
+// keep track somehow of every role that belongs to the group
+
+
+
+
+
+  // function checkRole(student: Student, group: Group) {
+  //   if(group.)
+  // }
+
+  // 0
+
+  //Returns the assignments belonging to an owner
+  app.get("/:owner", async function (request, response) {
+    const assignments = await assignmentRepository.find({ where: { owner: request.params.owner } });
+    return response.send(assignments);
   });
 });

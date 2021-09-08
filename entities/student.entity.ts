@@ -22,6 +22,9 @@ export class Student extends SharedCollection {
   @Column("text", { nullable: true })
   groupId: string;
 
+  @Column("text", { nullable: true })
+  assignment: string;
+
   @CreateDateColumn({ name: "created_at" })
   createdAt?: Date;
 }
