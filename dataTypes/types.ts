@@ -1,19 +1,19 @@
 export enum EPreferredRole {
-  TEAM_LEADER = "Team Leader",
-  DESIGNER = "Designer",
-  FRONTEND = "Frontend",
-  BACKEND = "Backend",
-  BUSINESS_ANALYST = "Business Analyst",
-  TESTER = "Tester",
-  ARCHITECT = "Architect",
-  DEVOPS = "Dev-Ops",
+  TEAM_LEADER = "TEAM_LEADER",
+  DESIGNER = "DESIGNER",
+  FRONTEND = "FRONTEND",
+  BACKEND = "BACKEND",
+  BUSINESS_ANALYST = "BUSINESS_ANALYST",
+  TESTER = "TESTER",
+  ARCHITECT = "ARCHITECT",
+  DEVOPS = "DEVOPS",
 }
 
 export enum ESkills {
-  JAVASCRIPT = "Javascript",
-  TYPESCRIPT = "Typescript",
-  JAVA = "Java",
-  CPP = "C++",
-  UI_UX = "UI/UX",
+  JAVASCRIPT = "JAVASCRIPT",
+  TYPESCRIPT = "TYPESCRIPT",
+  JAVA = "JAVA",
+  C = "C",
+  UI_UX = "UI_UX",
   SQL = "SQL",
 }
