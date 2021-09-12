@@ -88,6 +88,16 @@ createConnection().then((connection) => {
     response.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     return response.send(ESkills);
   });
+
+  app.get("/:owner/admin-page", async function (request, response) {
+    response.header("Access-Control-Allow-Origin", "*");
+    response.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    const assignmentsOwnedByAdmin: Assignment[] = await assignmentRepository.find({
+      where: { owner: request.params.owner },
+    });
+    const ownersAssignments: string[] = assignmentsOwnedByAdmin.map((x) => x.assignmentName);
+    return response.send(ownersAssignments);
+  });
   //Register Route
   app.use("/auth", require("./routes/jwtAuth"));
 

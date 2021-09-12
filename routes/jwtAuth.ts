@@ -34,7 +34,7 @@ router.post("/register", validateForm, async (req, res) => {
         const token = jwtGenerator(JSON.stringify(results.studentid));
         res.json({token});
     } catch (error) {
-        console.error(error.message);
+        console.error(error);
         res.status(500).send("Server Error");
     }
 });
@@ -62,7 +62,7 @@ router.post("/login", validateForm, async (req, res) => {
         const token = jwtGenerator(JSON.stringify(user.map((data) => data.studentid)));
         res.json({token});
     } catch (error) {
-        console.error(error.message);
+        console.error(error);
         res.status(500).send("Server Error");    }
 })
 //Admins can only signup/login using their provided @link.com.au email address, this will be what distinguishes them from students
@@ -91,7 +91,7 @@ router.post("/register/admin", validateForm, async(req, res) => {
         const token = jwtGenerator(JSON.stringify(results.adminId));
         res.json({token});
     } catch (error) {
-        console.error(error.message);
+        console.error(error);
         res.status(500).send("Server Error");
     }
 });
@@ -116,7 +116,7 @@ router.post("/login/admin", validateForm, async (req, res) => {
         const token = jwtGenerator(JSON.stringify(user.map((data) => data.adminId)));
         res.json({token});
     } catch (error) {
-        console.error(error.message);
+        console.error(error);
         res.status(500).send("Server Error");    }
 })
 
