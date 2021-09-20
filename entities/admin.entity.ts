@@ -1,4 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, Generated } from "typeorm";
+import { type } from "os";
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, Generated, OneToMany, JoinColumn } from "typeorm";
+import { Assignment } from "./assignment.entity";
 
 @Entity({ name: "admin" })
 export class admin {
@@ -22,4 +24,8 @@ export class admin {
 
   @CreateDateColumn({ name: "created_at" })
   createdAt?: Date;
+
+  @OneToMany(() => Assignment, (assignment) => assignment.admin, { cascade: true })
+  @JoinColumn()
+  assignments: Assignment[];
 }

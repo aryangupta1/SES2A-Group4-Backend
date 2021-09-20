@@ -8,6 +8,7 @@ import { Assignment } from "./entities/assignment.entity";
 import { EPreferredRole, ESkills } from "./dataTypes/types";
 import { group } from "console";
 import { admin } from "./entities/admin.entity";
+import { PRIORITY_LOW } from "constants";
 
 createConnection().then((connection) => {
   const studentRepository = connection.getRepository(Student);
@@ -27,29 +28,42 @@ createConnection().then((connection) => {
   //Allows us to access request.body to access JSON data
   app.use(express.json());
 
-  app.put("/students/:email/roles", async function(request, response){
+  app.put("/students/:email/roles", async function (request, response) {
     response.header("Access-Control-Allow-Origin", "*");
     response.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     const email = request.params.email;
-    const roles = request.body;    
-    const updateStudent = await studentRepository.createQueryBuilder("student").update<Student>(Student, {rolesRequired: roles})
-    .where("email = :email", {email:email}).execute();
+    const roles = request.body;
+    const updateStudent = await studentRepository
+      .createQueryBuilder("student")
+      .update<Student>(Student, { rolesRequired: roles })
+      .where("email = :email", { email: email })
+      .execute();
     return response.json(updateStudent);
   });
 
-  app.put("/students/:email/skills", async function(request, response){
+  app.put("/students/:email/skills", async function (request, response) {
     response.header("Access-Control-Allow-Origin", "*");
     response.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     const email = request.params.email;
-    const skills = request.body;    
-    const updateStudent = await studentRepository.createQueryBuilder("student").update<Student>(Student, {skillsRequired: skills})
-    .where("email = :email", {email:email}).execute();
+    const skills = request.body;
+    const updateStudent = await studentRepository
+      .createQueryBuilder("student")
+      .update<Student>(Student, { skillsRequired: skills })
+      .where("email = :email", { email: email })
+      .execute();
     return response.json(updateStudent);
   });
 
   app.post("/students", async function (request, response) {
     const student = await studentRepository.create(request.body);
     const results = await studentRepository.save(student);
+    console.log(request.body);
+    return response.json(results);
+  });
+// NOT THESE 2
+  app.post("/admin", async function (request, response) {
+    const admin = await adminRepository.create(request.body);
+    const results = await adminRepository.save(admin);
     console.log(request.body);
     return response.json(results);
   });
@@ -61,9 +75,41 @@ createConnection().then((connection) => {
     return response.json(results);
   });
 
-  app.post("/assignments", async function (request, response) {
-    // Creates an assignment and any groups that must be created within it
-    let groupsInAssignmentInstance: string[] = [];
+  // app.post("/assignments", async function (request, response) {
+  //   // Creates an assignment and any groups that must be created within it
+  //   let groupsInAssignmentInstance: string[] = [];
+
+  //   for (let index = 0; index < request.body.numberOfGroups; index++) {
+  //     const newGroup: Group = {
+  //       groupName: request.body.assignmentName + "-Group-" + (index + 1),
+  //       studentIdsInGroup: [],
+  //       assignmentName: request.body.assignmentName,
+  //       maxSizeOfGroup: request.body.maxSizeOfGroup,
+  //       rolesRequired: request.body.rolesRequired,
+  //       skillsRequired: request.body.skillsRequired,
+  //     };
+  //     const group = await groupRepository.create(newGroup);
+  //     const groupResult = await groupRepository.save(group);
+  //     // response.write(groupResult);
+  //     groupsInAssignmentInstance.push(newGroup.groupName);
+  //   }
+  //   request.body.groupsInThisAssignment = groupsInAssignmentInstance;
+
+  //   const assignment = await assignmentRepository.create(request.body);
+  //   const assignmentResult = await assignmentRepository.save(assignment);
+  //   return response.send(assignmentResult);
+  // });
+
+  //NOT THIS
+  app.put("/assignments", async function (request, response) {
+    const admin: admin = (await adminRepository.findOne({ where: { email: request.body.email } }))!;
+    const assignment: Assignment = new Assignment();
+    assignment.admin = admin;
+    assignment.assignmentName = request.body.assignmentName;
+    assignment.maxSizeOfGroup = request.body.maxSizeOfGroup;
+    assignment.numberOfGroups = request.body.numberOfGroups;
+    assignment.rolesRequired = request.body.rolesRequired;
+    assignment.skillsRequired = request.body.skillsRequired;
 
     for (let index = 0; index < request.body.numberOfGroups; index++) {
       const newGroup: Group = {
@@ -73,17 +119,15 @@ createConnection().then((connection) => {
         maxSizeOfGroup: request.body.maxSizeOfGroup,
         rolesRequired: request.body.rolesRequired,
         skillsRequired: request.body.skillsRequired,
+        assignment: assignment,
       };
-
-      const group = await groupRepository.create(newGroup);
-      const groupResult = await groupRepository.save(group);
-      // response.write(groupResult);
-      groupsInAssignmentInstance.push(newGroup.groupName);
+      assignment.groups?.push(newGroup);
     }
-    request.body.groupsInThisAssignment = groupsInAssignmentInstance;
-    const assignment = await assignmentRepository.create(request.body);
-    const assignmentResult = await assignmentRepository.save(assignment);
-    return response.send(assignmentResult);
+
+    admin.assignments?.push(assignment);
+    const savedAssignment = await assignmentRepository.save(assignment);
+    const newAssignment = await adminRepository.save(admin).catch();
+    response.send(savedAssignment);
   });
 
   app.put("/groups/:studentId/:groupId", async function (request, response) {
