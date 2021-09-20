@@ -27,39 +27,16 @@ createConnection().then((connection) => {
   app.use(cors());
   //Allows us to access request.body to access JSON data
   app.use(express.json());
+  //Student routes
+  app.use("/students", require("./routes/students"));
+  //Assignment routes
+  app.use("/assignments", require("./routes/assignments"));
+  //Register Route
+  app.use("/auth", require("./routes/jwtAuth"));
+  //Group Route
+  app.use("/groups", require("./routes/groups"));
 
-  app.put("/students/:email/roles", async function (request, response) {
-    response.header("Access-Control-Allow-Origin", "*");
-    response.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    const email = request.params.email;
-    const roles = request.body;
-    const updateStudent = await studentRepository
-      .createQueryBuilder("student")
-      .update<Student>(Student, { rolesRequired: roles })
-      .where("email = :email", { email: email })
-      .execute();
-    return response.json(updateStudent);
-  });
 
-  app.put("/students/:email/skills", async function (request, response) {
-    response.header("Access-Control-Allow-Origin", "*");
-    response.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    const email = request.params.email;
-    const skills = request.body;
-    const updateStudent = await studentRepository
-      .createQueryBuilder("student")
-      .update<Student>(Student, { skillsRequired: skills })
-      .where("email = :email", { email: email })
-      .execute();
-    return response.json(updateStudent);
-  });
-
-  app.post("/students", async function (request, response) {
-    const student = await studentRepository.create(request.body);
-    const results = await studentRepository.save(student);
-    console.log(request.body);
-    return response.json(results);
-  });
 // NOT THESE 2
   app.post("/admin", async function (request, response) {
     const admin = await adminRepository.create(request.body);
@@ -129,57 +106,5 @@ createConnection().then((connection) => {
     const newAssignment = await adminRepository.save(admin).catch();
     response.send(savedAssignment);
   });
-
-  app.put("/groups/:studentId/:groupId", async function (request, response) {
-    const student: Student = (await studentRepository.findOne(request.params.studentId))!; // The '!' is a non-null assertion operator
-    const group = await groupRepository.findOne(request.params.groupId);
-    //student.group = group?.groupId!;
-    const studentUpdate = await studentRepository.save(student);
-    return response.send(studentUpdate);
-
-    // console.log(req.body);
-    // return res.json(results);
-  });
-  //Sends preferences to frontend to render on UI
-  app.get("/preferences", async function (request, response) {
-    response.header("Access-Control-Allow-Origin", "*");
-    response.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    return response.send(EPreferredRole);
-  });
-  //Sends skills to frontend to render on UI
-  app.get("/skills", async function (request, response) {
-    response.header("Access-Control-Allow-Origin", "*");
-    response.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    return response.send(ESkills);
-  });
-
-  app.get("/:owner/admin-page", async function (request, response) {
-    response.header("Access-Control-Allow-Origin", "*");
-    response.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    const assignmentsOwnedByAdmin: Assignment[] = await assignmentRepository.find({
-      where: { owner: request.params.owner },
-    });
-    const ownersAssignments: string[] = assignmentsOwnedByAdmin.map((x) => x.assignmentName);
-    return response.send(ownersAssignments);
-  });
-  //Register Route
-  app.use("/auth", require("./routes/jwtAuth"));
-
-  app.put("/:assignmentName/sorting", async function (request, response) {
-    //Request is the assignment
-    const assignment: Assignment = (await assignmentRepository.findOne(request.params.assignmentName))!;
-    const groupNames: string[] = assignment.groupsInThisAssignment;
-    const groups: Group[] = [];
-    for (let index in groupNames) {
-      const individualGroup = (await groupRepository.findOne(index))!;
-      groups.push(individualGroup);
-    } // Gives us our list of groups for an assignment
-
-    // Roles first - Loop through each group, and if they dont have their roles met, add a student who meets the criteria
-    // groups.forEach(element => {
-    //   if(element.rolesRequired.length===0){
-    //     const eligibleStudent = (await studentRepository.findOne(element.rolesRequired))
-    //   }
-    // });
-  });
+  
 });
