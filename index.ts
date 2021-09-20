@@ -36,8 +36,7 @@ createConnection().then((connection) => {
   //Group Route
   app.use("/groups", require("./routes/groups"));
 
-
-// NOT THESE 2
+  // NOT THESE 2
   app.post("/admin", async function (request, response) {
     const admin = await adminRepository.create(request.body);
     const results = await adminRepository.save(admin);
@@ -76,9 +75,15 @@ createConnection().then((connection) => {
   //   const assignmentResult = await assignmentRepository.save(assignment);
   //   return response.send(assignmentResult);
   // });
+  // retrieve all assignments owned by an admin
+  app.get("/assignments", async function (request, response) {
+    const admin: admin = (await adminRepository.findOne({ where: { email: request.body.email } }))!;
+    const assignments: Assignment[] = await assignmentRepository.find({ where: { admin: admin } });
+    response.send(assignments);
+  });
 
-  //NOT THIS
-  app.put("/assignments", async function (request, response) {
+  //This creates the assignmnet + groups
+  app.post("/assignments", async function (request, response) {
     const admin: admin = (await adminRepository.findOne({ where: { email: request.body.email } }))!;
     const assignment: Assignment = new Assignment();
     assignment.admin = admin;
@@ -99,12 +104,10 @@ createConnection().then((connection) => {
         assignment: assignment,
       };
       assignment.groups?.push(newGroup);
+      const createdGroup = (await groupRepository.save(newGroup))!;
     }
-
     admin.assignments?.push(assignment);
     const savedAssignment = await assignmentRepository.save(assignment);
-    const newAssignment = await adminRepository.save(admin).catch();
-    response.send(savedAssignment);
+    response.send(admin.assignments);
   });
-  
 });

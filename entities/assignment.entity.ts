@@ -35,5 +35,5 @@ export class Assignment extends SharedCollection {
   @ManyToOne(() => admin, (admin) => admin.assignments)
   admin: admin;
 
-  @OneToMany(() => Group, (group) => group, { cascade: true }) groups: Group[];
+  @OneToMany(() => Group, (group) => group) groups: Group[];
 }

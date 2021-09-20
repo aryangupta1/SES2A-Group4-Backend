@@ -7,7 +7,7 @@ export class admin {
   @PrimaryGeneratedColumn("uuid")
   adminId: string;
 
-  @Column("text", { nullable: true })
+  @Column("text", { nullable: true, unique: true })
   email: string;
 
   @Column("text", { nullable: true })
@@ -18,9 +18,6 @@ export class admin {
 
   @Column("text", { nullable: true })
   lastName: string;
-
-  @Column("text", { array: true, nullable: true })
-  assignmentNames: string[]; // Can create multiple assignments
 
   @CreateDateColumn({ name: "created_at" })
   createdAt?: Date;
