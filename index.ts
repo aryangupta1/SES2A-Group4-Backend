@@ -51,30 +51,6 @@ createConnection().then((connection) => {
     return response.json(results);
   });
 
-  // app.post("/assignments", async function (request, response) {
-  //   // Creates an assignment and any groups that must be created within it
-  //   let groupsInAssignmentInstance: string[] = [];
-
-  //   for (let index = 0; index < request.body.numberOfGroups; index++) {
-  //     const newGroup: Group = {
-  //       groupName: request.body.assignmentName + "-Group-" + (index + 1),
-  //       studentIdsInGroup: [],
-  //       assignmentName: request.body.assignmentName,
-  //       maxSizeOfGroup: request.body.maxSizeOfGroup,
-  //       rolesRequired: request.body.rolesRequired,
-  //       skillsRequired: request.body.skillsRequired,
-  //     };
-  //     const group = await groupRepository.create(newGroup);
-  //     const groupResult = await groupRepository.save(group);
-  //     // response.write(groupResult);
-  //     groupsInAssignmentInstance.push(newGroup.groupName);
-  //   }
-  //   request.body.groupsInThisAssignment = groupsInAssignmentInstance;
-
-  //   const assignment = await assignmentRepository.create(request.body);
-  //   const assignmentResult = await assignmentRepository.save(assignment);
-  //   return response.send(assignmentResult);
-  // });
   // retrieve all assignments owned by an admin
   app.get("/assignments", async function (request, response) {
     const admin: admin = (await adminRepository.findOne({ where: { email: request.body.email } }))!;
@@ -82,7 +58,7 @@ createConnection().then((connection) => {
     response.send(assignments);
   });
 
-  //This creates the assignmnet + groups
+  //This creates the assignment + groups
   app.post("/assignments", async function (request, response) {
     const admin: admin = (await adminRepository.findOne({ where: { email: request.body.email } }))!;
     const assignment: Assignment = new Assignment();
@@ -96,12 +72,12 @@ createConnection().then((connection) => {
     for (let index = 0; index < request.body.numberOfGroups; index++) {
       const newGroup: Group = {
         groupName: request.body.assignmentName + "-Group-" + (index + 1),
-        studentIdsInGroup: [],
         assignmentName: request.body.assignmentName,
         maxSizeOfGroup: request.body.maxSizeOfGroup,
         rolesRequired: request.body.rolesRequired,
         skillsRequired: request.body.skillsRequired,
         assignment: assignment,
+        students: [],
       };
       assignment.groups?.push(newGroup);
       const createdGroup = (await groupRepository.save(newGroup))!;

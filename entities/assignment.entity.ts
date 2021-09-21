@@ -7,6 +7,8 @@ import {
   ManyToOne,
   OneToMany,
   JoinColumn,
+  JoinTable,
+  ManyToMany,
 } from "typeorm";
 import { EPreferredRole, ESkills } from "../dataTypes/types";
 import { Student } from "./student.entity";
@@ -36,4 +38,8 @@ export class Assignment extends SharedCollection {
   admin: admin;
 
   @OneToMany(() => Group, (group) => group) groups: Group[];
+
+  @ManyToMany(() => Student, (student) => student.assignments)
+  @JoinTable()
+  students: Student[];
 }

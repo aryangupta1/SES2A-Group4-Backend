@@ -1,5 +1,8 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, Generated } from "typeorm";
+import { group } from "console";
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, Generated, ManyToMany, JoinTable } from "typeorm";
 import { EPreferredRole, ESkills } from "../dataTypes/types";
+import { Assignment } from "./assignment.entity";
+import { Group } from "./group.entity";
 import { SharedCollection } from "./sharedCollection.entity";
 
 @Entity({ name: "student" })
@@ -24,4 +27,12 @@ export class Student extends SharedCollection {
 
   @CreateDateColumn({ name: "created_at" })
   createdAt?: Date;
+
+  @ManyToMany(() => Assignment, (assignment) => assignment.students)
+  @JoinTable()
+  assignments: Assignment[];
+
+  @ManyToMany(() => Group, (group) => group.students)
+  @JoinTable()
+  groups: Group[];
 }
