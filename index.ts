@@ -1,14 +1,11 @@
-import express, { request, response } from "express";
+import express from "express";
 //import pool from "./db";
 import cors from "cors";
 import { createConnection, Index } from "typeorm";
 import { Student } from "./entities/student.entity";
 import { Group } from "./entities/group.entity";
 import { Assignment } from "./entities/assignment.entity";
-import { EPreferredRole, ESkills } from "./dataTypes/types";
-import { group } from "console";
 import { admin } from "./entities/admin.entity";
-import { PRIORITY_LOW } from "constants";
 
 createConnection().then((connection) => {
   const studentRepository = connection.getRepository(Student);
