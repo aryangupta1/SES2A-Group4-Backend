@@ -41,9 +41,20 @@ createConnection().then((connection) => {
     return response.json(results);
   });
 
-  app.post("/groups", async function (request, response) {
-    const group = await groupRepository.create(request.body);
-    const results = await groupRepository.save(group);
+  //Body = student details only
+  app.post("/studentCreation", async function (request, response) {
+    const group: Group = (await groupRepository.findOne({ where: { groupName: request.body.groupName } }))!;
+    const student: Student = new Student();
+
+    student.firstName = request.body.firstName;
+    student.lastName = request.body.lastName;
+    student.email = request.body.email;
+    student.rolesRequired = request.body.rolesRequired;
+    student.skillsRequired = request.body.skillsRequired;
+
+    const createdStudent = await studentRepository.create(student);
+    const results = await studentRepository.save(createdStudent);
+
     console.log(request.body);
     return response.json(results);
   });
@@ -53,6 +64,25 @@ createConnection().then((connection) => {
     const admin: admin = (await adminRepository.findOne({ where: { email: request.body.email } }))!;
     const assignments: Assignment[] = await assignmentRepository.find({ where: { admin: admin } });
     response.send(assignments);
+  });
+
+  // Body contains assignment name
+  app.put("/addStudentToAssignment/:studentEmail", async function (request, response) {
+    const studentEmail = request.params.studentEmail;
+    const student: Student = (await studentRepository.findOne({ where: { email: studentEmail } }))!;
+    const assignment: Assignment = (await assignmentRepository.findOne({
+      where: { assignmentName: request.body.assignmentName },
+    }))!;
+    assignment.students.push(student);
+    const savedAssignment = await assignmentRepository.save(assignment);
+    response.send(savedAssignment);
+
+  // Still working on this
+    const assignmentio = (await assignmentRepository.findOne(1, { relations: ["students"] }))!;
+    assignmentio?.students.push(student);
+    await assignmentRepository.save(assignmentio);
+
+    await connection.createQueryBuilder().relation(Assignment, "s")
   });
 
   //This creates the assignment + groups
@@ -79,8 +109,12 @@ createConnection().then((connection) => {
       assignment.groups?.push(newGroup);
       const createdGroup = (await groupRepository.save(newGroup))!;
     }
-    admin.assignments?.push(assignment);
-    const savedAssignment = await assignmentRepository.save(assignment);
-    response.send(admin.assignments);
+
+    const savedAssignment = await assignmentRepository.save(assignment)!;
+    response.send(savedAssignment);
   });
+
+  // Request should just receive assignment name?
+
+  app.put("/:assignmentId/Sorting", async function (request, response) {});
 });

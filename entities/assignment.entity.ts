@@ -9,6 +9,7 @@ import {
   JoinColumn,
   JoinTable,
   ManyToMany,
+  Unique,
 } from "typeorm";
 import { EPreferredRole, ESkills } from "../dataTypes/types";
 import { Student } from "./student.entity";
@@ -18,18 +19,16 @@ import { SharedCollection } from "./sharedCollection.entity";
 import { admin } from "./admin.entity";
 
 @Entity({ name: "assignment" })
+@Unique(["assignmentName"])
 export class Assignment extends SharedCollection {
-  @Column("text", { nullable: true })
-  owner: string; // Must be a admin username
-
   @Column({ nullable: false })
   numberOfGroups: Number;
 
   @Column({ nullable: false })
   maxSizeOfGroup: Number;
 
-  @Column("text", { array: true, nullable: true })
-  groupsInThisAssignment: string[];
+  @Column("text", { nullable: true, default:[] })
+  assignmentName: string;
 
   @CreateDateColumn({ name: "created_at" })
   createdAt: Date;
@@ -39,7 +38,7 @@ export class Assignment extends SharedCollection {
 
   @OneToMany(() => Group, (group) => group) groups: Group[];
 
-  @ManyToMany(() => Student, (student) => student.assignments)
+  @ManyToMany(() => Student, (student) => student.assignments, { cascade: true })
   @JoinTable()
   students: Student[];
 }

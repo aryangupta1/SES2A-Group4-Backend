@@ -6,9 +6,6 @@ import { Assignment } from "../entities/assignment.entity";
 import { Group } from "../entities/group.entity";
 const connection = getConnection();
 
-
-
-
 router.get("/:owner/admin-page", async function (request, response) {
   response.header("Access-Control-Allow-Origin", "*");
   response.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
@@ -18,26 +15,6 @@ router.get("/:owner/admin-page", async function (request, response) {
   });
   const ownersAssignments: string[] = assignmentsOwnedByAdmin.map((x) => x.assignmentName);
   return response.send(ownersAssignments);
-});
-
-router.put("/:assignmentName/sorting", async function (request, response) {
-  //Request is the assignment
-  const assignmentRepository = await connection.getRepository(Assignment);
-  const groupRepository = await connection.getRepository(Group);
-  const assignment: Assignment = (await assignmentRepository.findOne(request.params.assignmentName))!;
-  const groupNames: string[] = assignment.groupsInThisAssignment;
-  const groups: Group[] = [];
-  for (let index in groupNames) {
-    const individualGroup = (await groupRepository.findOne(index))!;
-    groups.push(individualGroup);
-  } // Gives us our list of groups for an assignment
-
-  // Roles first - Loop through each group, and if they dont have their roles met, add a student who meets the criteria
-  // groups.forEach(element => {
-  //   if(element.rolesRequired.length===0){
-  //     const eligibleStudent = (await studentRepository.findOne(element.rolesRequired))
-  //   }
-  // });
 });
 
 module.exports = router;

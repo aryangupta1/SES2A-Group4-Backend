@@ -22,6 +22,9 @@ export class Group extends SharedCollection {
   @Column({ nullable: true })
   maxSizeOfGroup: Number;
 
+  @Column("text", { nullable: true })
+  assignmentName: string;
+
   @CreateDateColumn({ name: "created_at" })
   createdAt?: Date;
 

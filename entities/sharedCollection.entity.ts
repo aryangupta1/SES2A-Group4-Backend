@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, PrimaryColumn } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, PrimaryColumn, Unique } from "typeorm";
 import { EPreferredRole, ESkills } from "../dataTypes/types";
 import { Student } from "./student.entity";
 import uuid from "uuid";
@@ -8,9 +8,6 @@ import { Group } from "./group.entity";
 export abstract class SharedCollection {
   @PrimaryGeneratedColumn("uuid")
   id?: string;
-
-  @Column("text", { nullable: true })
-  assignmentName: string;
 
   @Column("enum", { array: true, nullable: true, enum: EPreferredRole, default: [] })
   rolesRequired: EPreferredRole[];
