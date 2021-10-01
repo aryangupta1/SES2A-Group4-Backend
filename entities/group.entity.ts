@@ -31,7 +31,7 @@ export class Group extends SharedCollection {
   @ManyToOne(() => Assignment, (assignment) => assignment.groups)
   assignment?: Assignment;
 
-  @ManyToMany(() => Student, (students) => students.groups, { })
+  @ManyToMany(() => Student, (students) => students.groups, { cascade: true, eager: true })
   @JoinTable()
   students: Student[];
 }

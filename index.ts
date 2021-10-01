@@ -127,12 +127,14 @@ createConnection().then((connection) => {
   app.put("/groupAddition", async function (request, response) {
     const student: Student = await studentRepository.findOneOrFail({ where: { email: request.body.email } });
     const group: Group = (await groupRepository.findOne({ where: { id: request.body.id } }))!;
-    group.students.push(student);
+    await group.students.push(student);
     const savedGroup = await groupRepository.save(group);
     response.send(group);
   });
 
-  // Request should just receive assignment name?
 
+
+
+  // Request should just receive assignment name?
   app.put("/:assignmentId/Sorting", async function (request, response) {});
 });
