@@ -1,7 +1,7 @@
 import express from "express";
 //import pool from "./db";
 import cors from "cors";
-import { createConnection, Index } from "typeorm";
+import { createConnection } from "typeorm";
 import { Student } from "./entities/student.entity";
 import { Group } from "./entities/group.entity";
 import { Assignment } from "./entities/assignment.entity";
@@ -43,7 +43,6 @@ createConnection().then((connection) => {
 
   //Body = student details only
   app.post("/studentCreation", async function (request, response) {
-    const group: Group = (await groupRepository.findOne({ where: { groupName: request.body.groupName } }))!;
     const student: Student = new Student();
 
     student.firstName = request.body.firstName;
@@ -67,22 +66,16 @@ createConnection().then((connection) => {
   });
 
   // Body contains assignment name
-  app.put("/addStudentToAssignment/:studentEmail", async function (request, response) {
-    const studentEmail = request.params.studentEmail;
+  app.put("/addStudentToAssignment", async function (request, response) {
+    const studentEmail = request.body.studentEmail;
     const student: Student = (await studentRepository.findOne({ where: { email: studentEmail } }))!;
     const assignment: Assignment = (await assignmentRepository.findOne({
       where: { assignmentName: request.body.assignmentName },
     }))!;
+
     assignment.students.push(student);
-    const savedAssignment = await assignmentRepository.save(assignment);
-    response.send(savedAssignment);
-
-  // Still working on this
-    const assignmentio = (await assignmentRepository.findOne(1, { relations: ["students"] }))!;
-    assignmentio?.students.push(student);
-    await assignmentRepository.save(assignmentio);
-
-    await connection.createQueryBuilder().relation(Assignment, "s")
+    await assignmentRepository.save(assignment);
+    response.send(assignment.students);
   });
 
   //This creates the assignment + groups
@@ -106,12 +99,20 @@ createConnection().then((connection) => {
         assignment: assignment,
         students: [],
       };
-      assignment.groups?.push(newGroup);
-      const createdGroup = (await groupRepository.save(newGroup))!;
+      const createdGroup = (await groupRepository.insert(newGroup))!;
+      assignment.groups.push(newGroup);
     }
 
     const savedAssignment = await assignmentRepository.save(assignment)!;
     response.send(savedAssignment);
+  });
+
+  app.put("/groupAddition", async function (request, response) {
+    const student: Student = await studentRepository.findOneOrFail({ where: { email: request.body.email } });
+    const group: Group = (await groupRepository.findOne({ where: { id:request.body.id } }))!;
+    group.students.push(student);
+    const savedGroup = await groupRepository.save(group);
+    response.send(group);
   });
 
   // Request should just receive assignment name?

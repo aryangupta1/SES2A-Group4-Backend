@@ -27,7 +27,7 @@ export class Assignment extends SharedCollection {
   @Column({ nullable: false })
   maxSizeOfGroup: Number;
 
-  @Column("text", { nullable: true, default:[] })
+  @Column("text", { nullable: true, default: [] })
   assignmentName: string;
 
   @CreateDateColumn({ name: "created_at" })
@@ -36,9 +36,9 @@ export class Assignment extends SharedCollection {
   @ManyToOne(() => admin, (admin) => admin.assignments)
   admin: admin;
 
-  @OneToMany(() => Group, (group) => group) groups: Group[];
+  @OneToMany(() => Group, (group) => group.assignment) groups: Group[];
 
-  @ManyToMany(() => Student, (student) => student.assignments, { cascade: true })
+  @ManyToMany(() => Student, (student) => student.assignments, { cascade: true, eager: true })
   @JoinTable()
   students: Student[];
 }

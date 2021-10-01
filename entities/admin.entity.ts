@@ -22,7 +22,7 @@ export class admin {
   @CreateDateColumn({ name: "created_at" })
   createdAt?: Date;
 
-  @OneToMany(() => Assignment, (assignment) => assignment.admin, { cascade: true })
+  @OneToMany(() => Assignment, (assignment) => assignment.admin, { cascade: true, eager: true })
   @JoinColumn()
   assignments: Assignment[];
 }

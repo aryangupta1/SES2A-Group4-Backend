@@ -20,7 +20,7 @@ export class Student extends SharedCollection {
   @PrimaryGeneratedColumn("uuid")
   studentid: string;
 
-  @Column("text", { nullable: true })
+  @Column("text", { nullable: true, unique:true})
   email: string;
 
   @Column("text", { nullable: true })

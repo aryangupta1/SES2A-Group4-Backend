@@ -28,9 +28,10 @@ export class Group extends SharedCollection {
   @CreateDateColumn({ name: "created_at" })
   createdAt?: Date;
 
-  @ManyToOne(() => Assignment, (assignment) => assignment.groups, { cascade: true }) assignment: Assignment;
+  @ManyToOne(() => Assignment, (assignment) => assignment.groups, { cascade: true, eager: true })
+  assignment: Assignment;
 
-  @ManyToMany(() => Student, (students) => students.groups)
+  @ManyToMany(() => Student, (students) => students.groups, { cascade: true, eager: true })
   @JoinTable()
   students: Student[];
 }
