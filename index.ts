@@ -41,6 +41,13 @@ createConnection().then((connection) => {
     return response.json(results);
   });
 
+  //get students information
+
+  app.get("/receiveStudentDetails", async function (request, response) {
+    const student = await studentRepository.findOneOrFail({ where: { email: request.query.email } });
+    response.send(student.assignments);
+  });
+
   //Body = student details only
   app.post("/studentCreation", async function (request, response) {
     const student: Student = new Student();
@@ -69,25 +76,37 @@ createConnection().then((connection) => {
   app.put("/addStudentToAssignment", async function (request, response) {
     const studentEmail = request.body.studentEmail;
     const student: Student = (await studentRepository.findOne({ where: { email: studentEmail } }))!;
-    const assignment: Assignment = (await assignmentRepository.findOne({
+    const assignment: Assignment = await assignmentRepository.findOneOrFail({
       where: { assignmentName: request.body.assignmentName },
-    }))!;
-
-    assignment.students.push(student);
+    });
+    if (!assignment.students.includes(student)) {
+      (await assignment.students).push(student);
+    } else {
+      console.log("Student is already in this assignment!");
+    }
     await assignmentRepository.save(assignment);
+    response.send(assignment);
+  });
+
+  app.get("/getStudentsInAssignment", async function (request, response) {
+    const assigmentName = request.query.assignmentName;
+    const assignment = (await assignmentRepository.findOne({ where: { assignmentName: assigmentName } }))!;
     response.send(assignment.students);
   });
 
   //This creates the assignment + groups
   app.post("/assignments", async function (request, response) {
     const admin: admin = (await adminRepository.findOne({ where: { email: request.body.email } }))!;
-    const assignment: Assignment = new Assignment();
-    assignment.admin = admin;
-    assignment.assignmentName = request.body.assignmentName;
-    assignment.maxSizeOfGroup = request.body.maxSizeOfGroup;
-    assignment.numberOfGroups = request.body.numberOfGroups;
-    assignment.rolesRequired = request.body.rolesRequired;
-    assignment.skillsRequired = request.body.skillsRequired;
+    const assignment: Assignment = {
+      admin: admin,
+      assignmentName: request.body.assignmentName,
+      maxSizeOfGroup: request.body.maxSizeOfGroup,
+      numberOfGroups: request.body.numberOfGroups,
+      rolesRequired: request.body.rolesRequired,
+      skillsRequired: request.body.skillsRequired,
+      groups: [],
+      students: [],
+    };
 
     for (let index = 0; index < request.body.numberOfGroups; index++) {
       const newGroup: Group = {
@@ -96,20 +115,18 @@ createConnection().then((connection) => {
         maxSizeOfGroup: request.body.maxSizeOfGroup,
         rolesRequired: request.body.rolesRequired,
         skillsRequired: request.body.skillsRequired,
-        assignment: assignment,
         students: [],
       };
-      const createdGroup = (await groupRepository.insert(newGroup))!;
-      assignment.groups.push(newGroup);
+      (await assignment.groups).push(newGroup);
     }
-
     const savedAssignment = await assignmentRepository.save(assignment)!;
+
     response.send(savedAssignment);
   });
 
   app.put("/groupAddition", async function (request, response) {
     const student: Student = await studentRepository.findOneOrFail({ where: { email: request.body.email } });
-    const group: Group = (await groupRepository.findOne({ where: { id:request.body.id } }))!;
+    const group: Group = (await groupRepository.findOne({ where: { id: request.body.id } }))!;
     group.students.push(student);
     const savedGroup = await groupRepository.save(group);
     response.send(group);

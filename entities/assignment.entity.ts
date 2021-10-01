@@ -31,12 +31,12 @@ export class Assignment extends SharedCollection {
   assignmentName: string;
 
   @CreateDateColumn({ name: "created_at" })
-  createdAt: Date;
+  createdAt?: Date;
 
   @ManyToOne(() => admin, (admin) => admin.assignments)
   admin: admin;
 
-  @OneToMany(() => Group, (group) => group.assignment) groups: Group[];
+  @OneToMany(() => Group, (group) => group.assignment, { cascade: true, eager: true }) groups: Group[];
 
   @ManyToMany(() => Student, (student) => student.assignments, { cascade: true, eager: true })
   @JoinTable()
