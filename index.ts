@@ -1,4 +1,4 @@
-import express from "express";
+import express, { response } from "express";
 //import pool from "./db";
 import cors from "cors";
 import { createConnection } from "typeorm";
@@ -66,9 +66,12 @@ createConnection().then((connection) => {
   });
 
   // retrieve all assignments owned by an admin
-  app.get("/assignments", async function (request, response) {
-    const admin: admin = (await adminRepository.findOne({ where: { email: request.body.email } }))!;
-    const assignments: Assignment[] = await assignmentRepository.find({ where: { admin: admin } });
+  app.get("/assignmentsAdmin", async function (request, response) {
+    const admin: admin = (await adminRepository.findOneOrFail({ where: { email: request.query.email } }))!;
+    const assignments: string[] = [];
+    admin.assignments.forEach((assignment) => {
+      assignments.push(assignment.assignmentName);
+    });
     response.send(assignments);
   });
 
@@ -132,9 +135,37 @@ createConnection().then((connection) => {
     response.send(group);
   });
 
+  // algorithm helper functions
 
+  const groupRequirementsMet = (group: Group): Boolean => {
+    const requirements = group.rolesRequired;
+    const skills = group.skillsRequired;
+    const students = group.students;
 
+    return true;
+  };
 
   // Request should just receive assignment name?
-  app.put("/:assignmentId/Sorting", async function (request, response) {});
+  app.put("/sortAssignment", async function (request, response) {
+    const assignment: Assignment = await assignmentRepository.findOneOrFail({
+      where: { assignmentName: request.body.assignmentName },
+    });
+
+    const students: Student[] = assignment.students;
+    const groups: Group[] = assignment.groups;
+    response.send(assignment);
+
+    groups.forEach((group) => {});
+  });
 });
+
+// Sorting Algorithm Steps
+//
+// Find assignment using the body + assignmentName
+// Put students into an array
+// Put groups into an array
+//
+// while group hasnt had requirements met
+// loop through each student, if that student meets a requirement, and isnt in a group in this assignment
+// add them to the group
+// loop through each group at the end and add residual students
