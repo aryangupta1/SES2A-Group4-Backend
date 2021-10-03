@@ -1,16 +1,30 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from "typeorm";
+import { group } from "console";
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  Generated,
+  ManyToMany,
+  JoinTable,
+  Unique,
+} from "typeorm";
 import { EPreferredRole, ESkills } from "../dataTypes/types";
+import { Assignment } from "./assignment.entity";
+import { Group } from "./group.entity";
+import { SharedCollection } from "./sharedCollection.entity";
 
 @Entity({ name: "student" })
-export class Student {
+@Unique(["email"])
+export class Student extends SharedCollection {
   @PrimaryGeneratedColumn("uuid")
   studentid: string;
 
-  @Column("text", {nullable: true})
-  email?: string;
+  @Column("text", { nullable: true, unique:true})
+  email: string;
 
-  @Column("text", {nullable: true})
-  password?: string;
+  @Column("text", { nullable: true })
+  password: string;
 
   @Column("text", { nullable: true })
   firstName: string;
@@ -18,15 +32,12 @@ export class Student {
   @Column("text", { nullable: true })
   lastName: string;
 
-  @Column("enum", { array: true, nullable: true, enum: EPreferredRole, default: [] })
-  preferredRole: EPreferredRole[];
-
-  @Column("enum", { array: true, nullable: true, enum: ESkills, default: [] })
-  skills: ESkills[];
-
-  @Column("text", { nullable: true })
-  group: string;
-
   @CreateDateColumn({ name: "created_at" })
-  createdAt: Date;
+  createdAt?: Date;
+
+  @ManyToMany(() => Assignment, (assignment) => assignment.students)
+  assignments: Assignment[];
+
+  @ManyToMany(() => Group, (group) => group.students)
+  groups: Group[];
 }
