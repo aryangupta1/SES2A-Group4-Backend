@@ -75,7 +75,7 @@ router.post("/register/admin", validateForm, async (req, res) => {
   try {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    const { firstName, lastName, email, password } = req.body;
+    const { firstName, lastName, email, password, passwordConfirm } = req.body;
     const adminRepository = await connection.getRepository(admin);
     //Check if admin exists
     const user = await adminRepository.find({ where: { email: email } });
