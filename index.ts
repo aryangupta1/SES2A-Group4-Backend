@@ -6,6 +6,7 @@ import { Student } from "./entities/student.entity";
 import { Group } from "./entities/group.entity";
 import { Assignment } from "./entities/assignment.entity";
 import { admin } from "./entities/admin.entity";
+import { off } from "process";
 
 createConnection().then((connection) => {
   const studentRepository = connection.getRepository(Student);
@@ -41,8 +42,12 @@ createConnection().then((connection) => {
     return response.json(results);
   });
 
-  //get students information
+  app.get("/adminDetails", async function (request, response) {
+    const admin = await adminRepository.findOneOrFail({ where: { email: request.query.email } });
+    response.send(admin);
+  });
 
+  //get students information
   app.get("/receiveStudentDetails", async function (request, response) {
     const student = await studentRepository.findOneOrFail({ where: { email: request.query.email } });
     response.send(student.assignments);
@@ -138,11 +143,31 @@ createConnection().then((connection) => {
   // algorithm helper functions
 
   const groupRequirementsMet = (group: Group): Boolean => {
-    const requirements = group.rolesRequired;
-    const skills = group.skillsRequired;
-    const students = group.students;
-
-    return true;
+    let requiredRoles = group.rolesRequired; // Make an array of the groups required role
+    let requiredSkills = group.skillsRequired; // Make an array of the groups required skills
+    const students = group.students; // Make an array of the groups current students
+    for (let student of students) {
+      // For every student
+      for (let roles of student.rolesRequired) {
+        // for every role that student has
+        if (requiredRoles.includes(roles)) {
+          // if that role is required by the group
+          requiredRoles = requiredRoles.filter((role) => role != roles); // remove that role from the array
+        }
+        for (let skills of student.skillsRequired) {
+          // for every skill the student has
+          if (requiredSkills.includes(skills)) {
+            // for every skill required by the group
+            requiredSkills = requiredSkills.filter((skill) => skill != skills); // remove that skill from the array
+          }
+        }
+      }
+    }
+    if (requiredRoles.length === 0 && requiredSkills.length === 0) {
+      // if both the roles and skills array are empty (meaning all roles and skills have been met by students in the group)
+      return true;
+    }
+    return false;
   };
 
   // Request should just receive assignment name?
@@ -153,7 +178,7 @@ createConnection().then((connection) => {
 
     const students: Student[] = assignment.students;
     const groups: Group[] = assignment.groups;
-    response.send(assignment);
+    response.send(students);
 
     groups.forEach((group) => {});
   });
@@ -161,9 +186,9 @@ createConnection().then((connection) => {
 
 // Sorting Algorithm Steps
 //
-// Find assignment using the body + assignmentName
-// Put students into an array
-// Put groups into an array
+// Find assignment using the body + assignmentName DONE
+// Put students into an array DONE
+// Put groups into an array DONE
 //
 // while group hasnt had requirements met
 // loop through each student, if that student meets a requirement, and isnt in a group in this assignment
