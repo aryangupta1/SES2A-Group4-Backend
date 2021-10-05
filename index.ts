@@ -180,7 +180,11 @@ createConnection().then((connection) => {
     const groups: Group[] = assignment.groups;
     response.send(students);
 
-    groups.forEach((group) => {});
+    groups.forEach((group) => {
+      if (!groupRequirementsMet(group)) {
+        // Fill the group with students
+      }
+    });
   });
 });
 
@@ -190,7 +194,7 @@ createConnection().then((connection) => {
 // Put students into an array DONE
 // Put groups into an array DONE
 //
-// while group hasnt had requirements met
+// while group hasnt had requirements met DONE
 // loop through each student, if that student meets a requirement, and isnt in a group in this assignment
 // add them to the group
 // loop through each group at the end and add residual students
