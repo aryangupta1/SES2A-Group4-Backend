@@ -6,7 +6,7 @@ import { Student } from "./entities/student.entity";
 import { Group } from "./entities/group.entity";
 import { Assignment } from "./entities/assignment.entity";
 import { admin } from "./entities/admin.entity";
-import { off } from "process";
+import { off, send } from "process";
 
 createConnection().then((connection) => {
   const studentRepository = connection.getRepository(Student);
@@ -42,9 +42,12 @@ createConnection().then((connection) => {
     return response.json(results);
   });
 
-  app.get("/adminDetails", async function (request, response) {
+  app.get("/adminDetailsName", async function (request, response) {
     const admin = await adminRepository.findOneOrFail({ where: { email: request.query.email } });
-    response.send(admin);
+    const adminName: string = admin.firstName + " " + admin.lastName;
+    const sendAdmin = [];
+    sendAdmin.push(adminName);
+    response.send(sendAdmin);
   });
 
   //get students information
@@ -142,7 +145,7 @@ createConnection().then((connection) => {
 
   // algorithm helper functions
 
-  const groupRequirementsMet = (group: Group): Boolean => {
+  const groupRequirementsMet = async (group: Group): Promise<Boolean> => {
     let requiredRoles = group.rolesRequired; // Make an array of the groups required role
     let requiredSkills = group.skillsRequired; // Make an array of the groups required skills
     const students = group.students; // Make an array of the groups current students
@@ -170,6 +173,51 @@ createConnection().then((connection) => {
     return false;
   };
 
+  const checkIfStudentInGroup = async (student: Student, assignment: Assignment) => {
+    for (const group of assignment.groups) {
+      if (group.students.includes(student)) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  const fillGroup = async (group: Group) => {
+    let requiredRoles = group.rolesRequired; // Make an array of the groups required role
+    let requiredSkills = group.skillsRequired; // Make an array of the groups required skills
+    let assignment = (await assignmentRepository.findOne({ where: { assignmentName: group.assignmentName } }))!;
+    let students = assignment.students;
+    for (const student of students) {
+      if (!checkIfStudentInGroup(student, assignment) && requiredRoles.length > 0) {
+        for (const studentRole of student.rolesRequired) {
+          if (requiredRoles.includes(studentRole)) {
+            group.students.push(student);
+            requiredRoles.filter((role) => role != studentRole);
+            continue;
+          }
+        }
+      }
+      if (!checkIfStudentInGroup(student, assignment) && requiredSkills.length > 0) {
+        for (const studentSkill of student.skillsRequired) {
+          if (requiredSkills.includes(studentSkill)) {
+            group.students.push(student);
+            requiredSkills.filter((skill) => skill != studentSkill);
+            continue;
+          }
+        }
+      }
+    }
+  };
+
+  const isThereEligibleStudents = async (assignment: Assignment): Promise<Boolean> => {
+    let availableStudents = [];
+    for (const student of assignment.students) {
+      if (!(await checkIfStudentInGroup(student, assignment))) {
+        availableStudents.push(student);
+      }
+    }
+    return availableStudents.length > 0;
+  };
   // Request should just receive assignment name?
   app.put("/sortAssignment", async function (request, response) {
     const assignment: Assignment = await assignmentRepository.findOneOrFail({
@@ -181,8 +229,10 @@ createConnection().then((connection) => {
     response.send(students);
 
     groups.forEach((group) => {
-      if (!groupRequirementsMet(group)) {
-        // Fill the group with students
+      while (isThereEligibleStudents(assignment)) {
+        if (!groupRequirementsMet(group)) {
+          fillGroup(group); // Fill the group with students
+        }
       }
     });
   });
