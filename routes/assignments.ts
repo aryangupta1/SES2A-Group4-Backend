@@ -20,11 +20,16 @@ router.get("/:owner/admin-page", async function (request, response) {
 //get all assignments, regardless of owner
 
 router.get("", async function (request, response){
-  response.header("Access-Control-Allow-Origin", "*");
-  response.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-  const assignmentRepository = await connection.getRepository(Assignment);
-  const allAssignments: Assignment[] = await assignmentRepository.find({order: {assignmentName:"ASC"}})
-  return response.send(allAssignments)
+  try{
+    response.header("Access-Control-Allow-Origin", "*");
+    response.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    const assignmentRepository = await connection.getRepository(Assignment);
+    const allAssignments: Assignment[] = await assignmentRepository.find({order: {assignmentName:"ASC"}})
+    return response.send(allAssignments)
+  }
+  catch{
+    response.status(500).send("Server Error");
+  }
 })
 
 module.exports = router;
