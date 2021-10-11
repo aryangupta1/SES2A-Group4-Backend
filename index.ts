@@ -7,6 +7,7 @@ import { Group } from "./entities/group.entity";
 import { Assignment } from "./entities/assignment.entity";
 import { admin } from "./entities/admin.entity";
 import { off, send } from "process";
+import { FORMERR } from "dns";
 
 createConnection().then((connection) => {
   const studentRepository = connection.getRepository(Student);
@@ -235,6 +236,37 @@ createConnection().then((connection) => {
         }
       }
     });
+  });
+
+  app.put("/sortAssignments", async function (request, response) {
+    const assignment = await assignmentRepository.findOneOrFail({
+      // find assignment
+      where: { assignmentName: request.body.assignmentName },
+    });
+    let iterator = 0;
+    assignment.groups.forEach(async (group) => {
+      // for each group in assignment
+      while (group.students.length <= group.maxSizeOfGroup && iterator <= assignment.students.length - 1) {
+        // add students iteratively until the group is full
+        group.students.push(assignment.students[iterator]);
+
+        iterator++;
+      }
+    });
+    const sortedAssignment = await assignmentRepository.save(assignment);
+    response.send(sortedAssignment.groups);
+  });
+
+  app.put("/addAllStudentsToAssignment", async function (request, response) {
+    const assignment = await assignmentRepository.findOneOrFail({
+      where: { assignmentName: request.body.assignmentName },
+    });
+    const students = await studentRepository.find({});
+    students.forEach(async (student) => {
+      assignment.students.push(student);
+    });
+    const studentsAddedToAssignment = await assignmentRepository.save(assignment);
+    response.send(studentsAddedToAssignment);
   });
 });
 
