@@ -20,7 +20,7 @@ export class Student extends SharedCollection {
   @PrimaryGeneratedColumn("uuid")
   studentid: string;
 
-  @Column("text", { nullable: true, unique:true})
+  @Column("text", { nullable: true, unique: true })
   email: string;
 
   @Column("text", { nullable: true })
@@ -38,6 +38,6 @@ export class Student extends SharedCollection {
   @ManyToMany(() => Assignment, (assignment) => assignment.students)
   assignments: Assignment[];
 
-  @ManyToMany(() => Group, (group) => group.students)
+  @ManyToMany(() => Group, (group) => group.students,)
   groups: Group[];
 }

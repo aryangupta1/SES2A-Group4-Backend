@@ -96,6 +96,8 @@ createConnection().then((connection) => {
     } else {
       console.log("Student is already in this assignment!");
     }
+    student.assignments.push(assignment);
+    await studentRepository.save(student);
     await assignmentRepository.save(assignment);
     response.send(assignment);
   });

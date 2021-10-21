@@ -1,4 +1,3 @@
-import { type } from "os";
 import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, Generated, OneToMany, JoinColumn } from "typeorm";
 import { Assignment } from "./assignment.entity";
 
