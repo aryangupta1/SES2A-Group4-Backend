@@ -86,6 +86,8 @@ createConnection().then((connection) => {
 
   // Body contains assignment name
   app.put("/addStudentToAssignment", async function (request, response) {
+    response.header("Access-Control-Allow-Origin", "*");
+    response.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     const studentEmail = request.body.studentEmail;
     const student: Student = (await studentRepository.findOne({ where: { email: studentEmail } }))!;
     const assignment: Assignment = await assignmentRepository.findOneOrFail({
@@ -97,7 +99,7 @@ createConnection().then((connection) => {
       console.log("Student is already in this assignment!");
     }
     await assignmentRepository.save(assignment);
-    response.send(assignment);
+    response.json(assignment);
   });
 
   app.get("/getStudentsInAssignment", async function (request, response) {
